@@ -1,0 +1,408 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>A's Fighting Game — JPSA (Prototype)</title>
+  <meta name="description" content="Ficha del prototipo de A's Fighting Game — personajes, mapas, historia y entradas." />
+  <style>
+    :root{
+      --bg:#0b1020;
+      --card:#0f1724;
+      --muted:#9aa7c7;
+      --accent:#ff5c7a;
+      --glass: rgba(255,255,255,0.04);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      background:linear-gradient(180deg,#071028 0%,var(--bg) 100%);
+      color:#e6eef8;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      line-height:1.45;
+    }
+    header{
+      padding:28px 20px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:16px;
+    }
+    .brand{
+      display:flex;
+      gap:12px;
+      align-items:center;
+    }
+    .logo{
+      width:56px;height:56px;border-radius:12px;background:linear-gradient(135deg,#ff9aa2,#7ad7ff);
+      display:flex;align-items:center;justify-content:center;font-weight:700;color:#091226;
+      box-shadow:0 8px 24px rgba(0,0,0,0.5);
+    }
+    h1{margin:0;font-size:20px}
+    p.lead{margin:6px 0 0;color:var(--muted);font-size:13px}
+
+    main{padding:20px;max-width:1100px;margin:0 auto}
+    .grid{
+      display:grid;
+      grid-template-columns:1fr;
+      gap:18px;
+    }
+    @media(min-width:900px){
+      .grid{grid-template-columns: 2fr 1fr}
+    }
+
+    /* hero */
+    .hero{
+      background:linear-gradient(180deg,rgba(255,255,255,0.02),transparent);
+      border-radius:12px;padding:18px;box-shadow:0 6px 30px rgba(2,6,23,0.6);
+    }
+    .hero-top{display:flex;align-items:center;justify-content:space-between;gap:12px}
+    .hero-info{display:flex;gap:12px;align-items:center}
+    .meta{
+      background:var(--glass);
+      padding:8px 12px;border-radius:10px;font-size:13px;color:var(--muted)
+    }
+
+    /* character list */
+    .chars{
+      display:grid;
+      grid-template-columns:repeat(2,1fr);
+      gap:12px;
+      margin-top:12px;
+    }
+    @media(min-width:900px){ .chars{grid-template-columns:repeat(3,1fr)} }
+    .card{
+      background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      border-radius:10px;padding:12px;border:1px solid rgba(255,255,255,0.03);
+    }
+    .char-name{display:flex;align-items:center;gap:10px}
+    .avatar{
+      width:56px;height:56px;border-radius:8px;background:linear-gradient(135deg,#2b6cff,#b45cff);
+      display:flex;align-items:center;justify-content:center;font-weight:700;color:white;font-size:18px;
+      flex-shrink:0;
+    }
+    .tag{font-size:12px;color:var(--muted);margin-top:8px}
+
+    /* side panel */
+    aside .panel{
+      position:sticky;top:20px;background:var(--card);padding:14px;border-radius:12px;border:1px solid rgba(255,255,255,0.03)
+    }
+    .stages, .story {margin-bottom:14px}
+    .stage{display:flex;justify-content:space-between;gap:8px;padding:8px 10px;background:rgba(255,255,255,0.02);border-radius:8px;margin-top:8px}
+    footer{color:var(--muted);text-align:center;padding:28px 12px;font-size:13px}
+
+    /* modal */
+    .modal {
+      position:fixed;inset:0;background:rgba(2,6,23,0.7);display:none;align-items:center;justify-content:center;padding:20px;
+    }
+    .modal.show{display:flex}
+    .dialog{
+      width:min(820px,98%);background:linear-gradient(180deg,#081227,#0e1626);padding:18px;border-radius:12px;border:1px solid rgba(255,255,255,0.04);
+    }
+    .dialog h3{margin-top:0}
+    .close{
+      background:transparent;border:0;color:var(--muted);font-size:14px;padding:8px 10px;border-radius:8px;cursor:pointer
+    }
+    .controls{margin-top:12px;color:var(--muted);font-size:13px}
+
+    /* small */
+    .meta-row{display:flex;gap:8px;flex-wrap:wrap}
+    button.cta{
+      background:linear-gradient(90deg,var(--accent),#ffa96b);color:#071226;border:0;padding:10px 14px;border-radius:10px;font-weight:700;cursor:pointer;
+      box-shadow:0 8px 18px rgba(255,90,120,0.12)
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="brand">
+      <div class="logo">AFG</div>
+      <div>
+        <h1>A's Fighting Game — JPSA</h1>
+        <p class="lead">Prototipo: fichas de personajes, mapas y modo historia (ideas base).</p>
+      </div>
+    </div>
+    <div class="meta">
+      Prototype • Web demo • Ideas tomadas del archivo subido. :contentReference[oaicite:1]{index=1}
+    </div>
+  </header>
+
+  <main>
+    <section class="grid">
+      <!-- LEFT: hero + characters -->
+      <div>
+        <div class="hero card">
+          <div class="hero-top">
+            <div>
+              <h2 style="margin:0 0 6px 0">Batallas callejeras & secta poseída</h2>
+              <div style="color:var(--muted);font-size:14px">
+                Premisa: "E" ha poseído a la mayoría de la secta de A. El personaje elegido debe pelear para liberar a los demás y llegar al jefe final en el server. (Modo Historia esencial). :contentReference[oaicite:2]{index=2}
+              </div>
+            </div>
+            <div class="meta-row">
+              <div class="meta">Modo: 1P / 2P</div>
+              <div class="meta">Estilo: 2D/Arcade</div>
+              <div class="meta">Arquetipos mezclados</div>
+            </div>
+          </div>
+
+          <div class="chars" style="margin-top:14px">
+            <!-- Character cards: name, short archetype, short description. -->
+            <article class="card" data-id="lucas">
+              <div class="char-name">
+                <div class="avatar">L</div>
+                <div>
+                  <strong>Lucas</strong>
+                  <div class="tag">Arquetipo: Zonal / proyectil con balón</div>
+                </div>
+              </div>
+              <div class="tag">Ataques a distancia con pelota de basket que rebota; combates cortos con puños; especiales inspirados en movimientos de básquet.</div>
+              <div style="margin-top:10px"><button class="cta" onclick="openChar('lucas')">Ver ficha</button></div>
+            </article>
+
+            <article class="card" data-id="sebas">
+              <div class="char-name"><div class="avatar">S</div>
+                <div><strong>Sebas</strong><div class="tag">Arquetipo: Grappler / Cebo y castigo</div></div>
+              </div>
+              <div class="tag">Lento, gran tamaño, golpes potentes y agarres que castigan; podría usar cadena o impacto al piso como agarre especial.</div>
+              <div style="margin-top:10px"><button class="cta" onclick="openChar('sebas')">Ver ficha</button></div>
+            </article>
+
+            <article class="card" data-id="lisi">
+              <div class="char-name"><div class="avatar">Li</div>
+                <div><strong>Lisi</strong><div class="tag">Arquetipo: Rush / Combo-heavy</div></div>
+              </div>
+              <div class="tag">Golpes rápidos, muchos combos; proyectiles temáticos (mangas, objetos cómicos) con bajo daño por proyectil.</div>
+              <div style="margin-top:10px"><button class="cta" onclick="openChar('lisi')">Ver ficha</button></div>
+            </article>
+
+            <article class="card" data-id="leon">
+              <div class="char-name"><div class="avatar">Le</div>
+                <div><strong>León</strong><div class="tag">Arquetipo: All-rounder ofensivo</div></div>
+              </div>
+              <div class="tag">Ofensivo, ataques corto-medio-larga distancia; estética bajita y proyectiles "espirituales" (referencia latina).</div>
+              <div style="margin-top:10px"><button class="cta" onclick="openChar('leon')">Ver ficha</button></div>
+            </article>
+
+            <article class="card" data-id="lilian">
+              <div class="char-name"><div class="avatar">Li</div>
+                <div><strong>Lilian</strong><div class="tag">Arquetipo: Projectile / Zonero ágil</div></div>
+              </div>
+              <div class="tag">Alta velocidad y projectiles; hechizos o libros-trampa; ejemplo de movimiento: Expelliarmus (empuja/desarma).</div>
+              <div style="margin-top:10px"><button class="cta" onclick="openChar('lilian')">Ver ficha</button></div>
+            </article>
+
+            <article class="card" data-id="gonza">
+              <div class="char-name"><div class="avatar">G</div>
+                <div><strong>Gonzalo (Gonza)</strong><div class="tag">Arquetipo: Pressurer / Parry</div></div>
+              </div>
+              <div class="tag">Cuerpo a cuerpo, combos de alto daño, presión constante; parry estilo Ryu como recurso técnico.</div>
+              <div style="margin-top:10px"><button class="cta" onclick="openChar('gonza')">Ver ficha</button></div>
+            </article>
+
+            <article class="card" data-id="giovanni">
+              <div class="char-name"><div class="avatar">Gi</div>
+                <div><strong>Giovanni</strong><div class="tag">Arquetipo: Dominating / Rushdown</div></div>
+              </div>
+              <div class="tag">Velocidad y daño altos, debilidades explotables; posible gimmick inspirado en criaturas (idea: Pokémon-like, pendiente de balance).</div>
+              <div style="margin-top:10px"><button class="cta" onclick="openChar('giovanni')">Ver ficha</button></div>
+            </article>
+
+            <article class="card" data-id="martinjuan">
+              <div class="char-name"><div class="avatar">MJ</div>
+                <div><strong>Martín & Juan</strong><div class="tag">Arquetipo: Duo / Tag-lite</div></div>
+              </div>
+              <div class="tag">Dos personajes que comparten espacio; uno da golpes y otro patadas; combos cooperativos (estilo Cloak & Dagger / stand dual).</div>
+              <div style="margin-top:10px"><button class="cta" onclick="openChar('martinjuan')">Ver ficha</button></div>
+            </article>
+
+            <article class="card" data-id="joaquin">
+              <div class="char-name"><div class="avatar">J</div>
+                <div><strong>Joaquín</strong><div class="tag">Arquetipo: All-rounder / OVNIS</div></div>
+              </div>
+              <div class="tag">Proyectiles en forma de OVNIs; equilibrado y accesible para aprender; buen control de espacio.</div>
+              <div style="margin-top:10px"><button class="cta" onclick="openChar('joaquin')">Ver ficha</button></div>
+            </article>
+
+            <article class="card" data-id="darta">
+              <div class="char-name"><div class="avatar">D</div>
+                <div><strong>Darta (Tartas)</strong><div class="tag">Arquetipo: Básico / Shoto-like</div></div>
+              </div>
+              <div class="tag">Jugador clásico tipo Ryu/Ken; ataques relacionados con dibujo/lápices; fáciles de entender para principiantes.</div>
+              <div style="margin-top:10px"><button class="cta" onclick="openChar('darta')">Ver ficha</button></div>
+            </article>
+          </div>
+        </div>
+
+        <!-- small instruction -->
+        <div style="margin-top:12px;color:var(--muted);font-size:13px">
+          Consejo: usa estas fichas como base — cada personaje necesita kit (normales, especiales, supers, frames) y pruebas de balance.
+        </div>
+      </div>
+
+      <!-- RIGHT: side panel with story and maps -->
+      <aside>
+        <div class="panel">
+          <div class="story">
+            <h3 style="margin:0 0 8px 0">Historia (resumen)</h3>
+            <div style="color:var(--muted);font-size:14px">
+              Premisa: la entidad "E" ha poseído a los miembros de la secta de A, salvo al elegido (el protagonista). El protagonista recorre locales (secundaria, primaria, Abasto, casa de Darta...) derrotando a cada sectario hasta liberar a todos y enfrentar al jefe final en un server. :contentReference[oaicite:3]{index=3}
+            </div>
+          </div>
+
+          <div class="stages" style="margin-top:12px">
+            <h4 style="margin:0 0 8px 0">Mapas / Escenarios</h4>
+            <div class="stage"><div>Abasto</div><div class="tag">Zona del Coto — ambiente callejero</div></div>
+            <div class="stage"><div>Secundaria</div><div class="tag">Patio del árbol — escuela</div></div>
+            <div class="stage"><div>Patio de Darta</div><div class="tag">Patio trasero — ambiente indie</div></div>
+            <div class="stage"><div>Server (Minecraft)</div><div class="tag">Entrada de la iglesia — boss stage</div></div>
+            <div class="stage"><div>Casa Lisi</div><div class="tag">Living — escenario cerrado</div></div>
+            <div class="stage"><div>Primaria</div><div class="tag">Entrada — retro vibes</div></div>
+          </div>
+
+          <div style="margin-top:12px">
+            <h4 style="margin:0 0 8px 0">Entradas / Victory</h4>
+            <div style="color:var(--muted);font-size:14px">
+              Cada personaje tiene una entrada y una celebración distinta (por ejemplo: Joaquín baja de un OVNI; Gonza entra al estilo Kirby; Darta dibuja su entrada). Ideas extra y "fin de partida" descriptos en el documento original. :contentReference[oaicite:4]{index=4}
+            </div>
+          </div>
+
+          <div style="margin-top:14px">
+            <h4 style="margin:0 0 8px 0">Ideas rápidas</h4>
+            <ul style="margin:0;color:var(--muted);font-size:14px;padding-left:18px">
+              <li>Modo entrenamiento con maestro "Viejonza".</li>
+              <li>Especial de Darta que cambie color del enemigo.</li>
+              <li>Especial de Sebas que drene más vida al usuario que al enemigo (gimmick).</li>
+            </ul>
+          </div>
+
+          <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">
+            <button class="cta" onclick="downloadJSON()">Descargar ficha (JSON)</button>
+            <button class="close" onclick="showCredits()">Créditos / Fuente</button>
+          </div>
+        </div>
+      </aside>
+    </section>
+
+    <!-- modal detail -->
+    <div id="modal" class="modal" role="dialog" aria-modal="true" aria-hidden="true">
+      <div class="dialog" id="dialog">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <h3 id="m-title">Personaje</h3>
+          <div>
+            <button class="close" onclick="closeModal()">Cerrar ✕</button>
+          </div>
+        </div>
+        <div id="m-body" style="color:var(--muted);margin-top:8px"></div>
+        <div class="controls">
+          <strong>Controles sugeridos</strong>
+          <div style="margin-top:6px">
+            <code>LP / MP / HP</code> — golpes leves/medios/duros • <code>LK / MK / HK</code> — patadas • <code>↓↘→ + P</code> — proyectil especial • <code>↑↑</code> — salto doble
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <footer>
+    Hecho con las ideas del documento subido. Para ajustar arte, animaciones y balance, conviene exportar cada kit a un CSV/JSON y probar en build (Unity / Godot / custom engine). :contentReference[oaicite:5]{index=5}
+  </footer>
+
+  <script>
+    // DATA (resumida a partir del PDF de usuario)
+    const CHARACTERS = {
+      lucas: {
+        name:"Lucas",
+        archetype:"Zonal / Ball control",
+        desc:"Controla el espacio con una pelota de básquet que rebota; en corto usa puños. Especiales inspirados en movimientos de básquet (canasta aérea, pase-trampa)."
+      },
+      sebas: {
+        name:"Sebas",
+        archetype:"Grappler / Cebo y castigo",
+        desc:"Personaje de agarre: lento pero con agarres y golpes muy potentes. Ideal para castigar aperturas; posible uso de cadena o slam."
+      },
+      lisi: {
+        name:"Lisi",
+        archetype:"Rush / Combo-heavy",
+        desc:"Golpes muy rápidos y cadenas de combo. Proyectiles 'tontos' (mangas, panchos) de poco daño; diseño para presionar."
+      },
+      leon: {
+        name:"León",
+        archetype:"Ofensivo / All-rounder",
+        desc:"Ataca en corto, medio y largo. Proyectiles espirituales (temática latina). Personaje más bajito."
+      },
+      lilian: {
+        name:"Lilian",
+        archetype:"Zonero ágil / Projectile",
+        desc:"Alta velocidad y uso de proyectiles (libros/hechizos) que funcionan como trampas; ejemplo: empuje 'Expelliarmus'."
+      },
+      gonza: {
+        name:"Gonzalo (Gonza)",
+        archetype:"Pressurer / Parry",
+        desc:"Combate cuerpo a cuerpo con combos de alto daño y parry técnico estilo Ryu."
+      },
+      giovanni: {
+        name:"Giovanni",
+        archetype:"Dominating / Rushdown",
+        desc:"Velocidad y daño elevados; potencia alta con debilidades definidas. Idea de gimmick relacionada a criaturas (pendiente)."
+      },
+      martinjuan: {
+        name:"Martín & Juan",
+        archetype:"Duo / Tag-lite",
+        desc:"Par integrado: uno hace golpes, el otro patadas; combos conjuntos tipo 'stand' o cloack & dagger."
+      },
+      joaquin: {
+        name:"Joaquín",
+        archetype:"All-rounder / OVNIS",
+        desc:"Proyectiles en forma de OVNIs; equilibrado y accesible para nuevos jugadores."
+      },
+      darta: {
+        name:"Darta (Tartas)",
+        archetype:"Shoto-like / Básico",
+        desc:"Personaje básico tipo Ryu/Ken; ataques relacionados con dibujo y lápices; buena elección para principiantes."
+      }
+    };
+
+    // modal functions
+    function openChar(id){
+      const c = CHARACTERS[id];
+      if(!c) return;
+      document.getElementById('m-title').textContent = c.name + " — " + c.archetype;
+      document.getElementById('m-body').innerHTML = "<p style='margin:0 0 8px 0'>"+c.desc+"</p>" +
+        "<p style='margin:0;color:var(--muted)'>Ideas extra: entrada especial, victory pose, animaciones y super moves.</p>";
+      const modal = document.getElementById('modal');
+      modal.classList.add('show');
+      modal.setAttribute('aria-hidden','false');
+    }
+    function closeModal(){
+      const modal = document.getElementById('modal');
+      modal.classList.remove('show');
+      modal.setAttribute('aria-hidden','true');
+    }
+    window.addEventListener('keydown', (e)=>{ if(e.key==='Escape') closeModal(); });
+
+    // Download minimal JSON of the current roster (helper to export)
+    function downloadJSON(){
+      const payload = {
+        meta:{title:"A's Fighting Game — roster export"},
+        characters:CHARACTERS,
+        maps:[
+          "Abasto","Secundaria (Patio)","Patio de Darta","Server (Minecraft)","Casa Lisi","Primaria"
+        ],
+        notes:"Export creado desde index.html (prototype). Basado en documento subido."
+      };
+      const blob = new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a'); a.href = url; a.download = 'afg_roster.json';
+      document.body.appendChild(a); a.click(); setTimeout(()=>{ URL.revokeObjectURL(url); a.remove(); },500);
+    }
+
+    function showCredits(){
+      alert("Ideas y contenido tomados del documento 'Ideas de JPSA' (archivo del usuario). Referencia interna disponible.");
+    }
+  </script>
+</body>
+</html>
