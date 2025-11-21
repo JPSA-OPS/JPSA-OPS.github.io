@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><title>Character Select</title><link rel="stylesheet" href="css/style.css" /></head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div><div class="logo">Character Select</div><div class="hint">Choose your fighter</div></div>
+      <div><a class="btn" href="index.html">Back</a></div>
+    </div>
+
+    <div style="display:flex;gap:12px;margin-top:18px">
+      <div style="flex:1" class="panel">
+        <div class="roster-grid" id="selectRoster"></div>
+      </div>
+      <div style="width:360px" class="panel">
+        <h3>Selected</h3>
+        <div id="selectedCard"><em>None</em></div>
+        <div style="margin-top:12px"><a id="toFight" class="btn">Confirm & Go to Stage Select</a></div>
+      </div>
+    </div>
+
+    <div class="footer">Roster based on uploaded PDF: <a href="file:///mnt/data/Ideas de JPSA (1).pdf" target="_blank">Ideas de JPSA (1).pdf</a></div>
+  </div>
+
+<script>
+const ROSTER = [
+  {id:'lucas',name:'Lucas',archetype:'Zonal'},
+  {id:'sebas',name:'Sebas',archetype:'Grappler'},
+  {id:'lisi',name:'Lisi',archetype:'Rush'},
+  {id:'darta',name:'Darta',archetype:'Shoto'}
+];
+let selected = ROSTER[0];
+const wrap = document.getElementById('selectRoster');
+const sel = document.getElementById('selectedCard'); const toFight = document.getElementById('toFight');
+ROSTER.forEach(function(r){
+  var el = document.createElement('div'); el.className='char-card';
+  el.innerHTML = '<div class="mini-avatar">'+ r.name.charAt(0) +'</div><div><strong>'+ r.name +'</strong><div style="color:#9fb3cf">'+ r.archetype +'</div></div>';
+  el.addEventListener('click', function(){ selected = r; sel.innerHTML = '<strong>'+r.name+'</strong><div style="color:#9fb3cf">'+r.archetype+'</div>'; });
+  wrap.appendChild(el);
+});
+sel.innerHTML = '<strong>'+selected.name+'</strong><div style="color:#9fb3cf">'+selected.archetype+'</div>';
+toFight.addEventListener('click', function(){ localStorage.setItem('afg_selected', JSON.stringify(selected)); window.location='stage-select.html'; });
+</script>
+</body>
+</html>

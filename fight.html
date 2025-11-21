@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8" /><meta name="viewport" content="width=device-width,initial-scale=1" /><title>Fight — A's Fighting Game</title>
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <div class="container">
+    <div class="header"><div><div class="logo">Fight</div><div class="hint">1v1 match</div></div><div><a class="btn" href="index.html">Exit to Menu</a></div></div>
+
+    <div class="panel" style="text-align:center">
+      <canvas id="gameCanvas" width="980" height="540"></canvas>
+      <div id="status" style="margin-top:10px;color:#9fb3cf"></div>
+      <div style="margin-top:8px">
+        <a class="btn" id="btnRestart">Restart Match</a>
+      </div>
+    </div>
+
+    <div class="footer">If audio doesn't play, upload <code>assets/music/theme.mp3</code> and press Restart.</div>
+  </div>
+
+<script src="https://cdn.jsdelivr.net/npm/phaser@3.60.0/dist/phaser.min.js"></script>
+<script src="js/characters.js"></script>
+<script src="js/stages.js"></script>
+<script src="js/engine.js"></script>
+<script>
+document.getElementById('btnRestart').addEventListener('click', function(){ window.location.reload(); });
+</script>
+</body>
+</html>

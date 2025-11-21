@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><title>Stage Select</title><link rel="stylesheet" href="css/style.css" /></head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div><div class="logo">Stage Select</div><div class="hint">Pick a battleground</div></div>
+      <div><a class="btn" href="character-select.html">Back</a></div>
+    </div>
+
+    <div style="display:flex;gap:12px;margin-top:18px">
+      <div style="flex:1" class="panel">
+        <div class="roster-grid" id="stages"></div>
+      </div>
+      <div style="width:360px" class="panel">
+        <h3>Selected Stage</h3>
+        <div id="stageSelected">Abasto</div>
+        <div style="margin-top:12px"><a id="startFight" class="btn">Start Match</a></div>
+      </div>
+    </div>
+
+    <div class="footer">Stages are lightweight placeholders. You can replace background images in <code>/assets/stages/</code></div>
+  </div>
+
+<script>
+const STAGES = ['Abasto','Secundaria','Patio de Darta','Server'];
+let chosen = STAGES[0];
+const wrap = document.getElementById('stages');
+const sel = document.getElementById('stageSelected');
+const start = document.getElementById('startFight');
+STAGES.forEach(function(s){
+  var el = document.createElement('div'); el.className='char-card';
+  el.innerHTML = '<div style="width:56px;height:56px;border-radius:8px;background:#111;display:flex;align-items:center;justify-content:center">'+s.charAt(0)+'</div><div><strong>'+s+'</strong><div style="color:#9fb3cf">Stage</div></div>';
+  el.addEventListener('click', function(){ chosen=s; sel.textContent = s; });
+  wrap.appendChild(el);
+});
+start.addEventListener('click', function(){ localStorage.setItem('afg_stage', chosen); window.location='fight.html'; });
+</script>
+</body>
+</html>

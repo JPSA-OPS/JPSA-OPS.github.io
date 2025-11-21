@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>A's Fighting Game — Main Menu</title>
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div>
+        <div class="logo">A's Fighting Game</div>
+        <div class="hint">Guilty Gear inspired prototype — Multi-page build</div>
+      </div>
+      <div>
+        <a class="btn" href="fight.html">Quick Play</a>
+        <a class="btn" href="character-select.html">Character Select</a>
+        <a class="btn" href="story.html">Story</a>
+        <a class="btn" href="training.html">Training</a>
+        <a class="btn" href="roster.html">Roster</a>
+        <a class="btn ghost" href="options.html">Options</a>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:12px;margin-top:18px">
+      <div style="flex:1" class="panel">
+        <h3>Play</h3>
+        <p class="hint">Quick Play launches a 1v1 match vs CPU. Use arrow keys to move; J/K for attacks; Down-Forward + J for special.</p>
+      </div>
+      <div style="width:360px" class="panel">
+        <h3>Latest Notes</h3>
+        <p class="hint">Drop your music file at <code>assets/music/theme.mp3</code>. The PDF of your ideas is linked in Roster page.</p>
+      </div>
+    </div>
+
+    <div style="margin-top:12px" class="panel">
+      <h3>Quick roster preview</h3>
+      <div class="roster-grid" id="miniRoster"></div>
+    </div>
+
+    <div class="footer">Prototype — drop into a GitHub Pages repo to publish. Assets path: <code>/assets/</code></div>
+  </div>
+
+<script>
+const ROSTER = [{"id": "lucas", "name": "Lucas", "archetype": "Zonal"}, {"id": "sebas", "name": "Sebas", "archetype": "Grappler"}, {"id": "lisi", "name": "Lisi", "archetype": "Rush"}, {"id": "darta", "name": "Darta", "archetype": "Shoto"}];
+
+const mini = document.getElementById('miniRoster');
+ROSTER.forEach(function(r){
+  var el = document.createElement('div'); el.className='char-card';
+  el.innerHTML = '<div class="mini-avatar">'+ r.name.charAt(0) +'</div><div><strong>'+ r.name +'</strong><div style="color:#9fb3cf">'+ r.archetype +'</div></div>';
+  mini.appendChild(el);
+});
+</script>
+</body>
+</html>

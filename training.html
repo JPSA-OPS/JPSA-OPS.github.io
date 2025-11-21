@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><title>Training</title><link rel="stylesheet" href="css/style.css" /></head>
+<body>
+  <div class="container">
+    <div class="header"><div><div class="logo">Training Mode</div><div class="hint">Hone your skills</div></div><div><a class="btn" href="index.html">Back</a></div></div>
+    <div class="panel" style="margin-top:18px">
+      <h3>Instructions</h3>
+      <p>Training spawns a dummy (no damage) and allows you to test attacks and specials. J = Light, K = Heavy, ↓→ + J for special. Press Start to launch training.</p>
+      <p><a class="btn" id="startTraining">Start Training</a></p>
+    </div>
+  </div>
+<script>
+document.getElementById('startTraining').addEventListener('click', function(){
+  localStorage.setItem('afg_training','true');
+  window.location='fight.html';
+});
+</script>
+</body>
+</html>

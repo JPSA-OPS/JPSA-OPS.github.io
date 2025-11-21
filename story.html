@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><title>Story Mode</title><link rel="stylesheet" href="css/style.css" /></head>
+<body>
+  <div class="container">
+    <div class="header"><div><div class="logo">Story Mode</div><div class="hint">Play through the campaign</div></div><div><a class="btn" href="index.html">Back</a></div></div>
+    <div style="margin-top:18px" class="panel">
+      <h3>Premise</h3>
+      <p>La entidad "E" ha poseído a la mayoría de la secta de A. El protagonista debe derrotar a los sectarios y llegar al jefe final en el server.</p>
+      <h4>Nodes</h4>
+      <ol>
+        <li>Intro — Abasto (vs secuaces)</li>
+        <li>Secundaria — Patio (mini-boss)</li>
+        <li>Casa Darta — Boss</li>
+        <li>Server — Jefe Final</li>
+      </ol>
+      <p><a class="btn" id="startStory">Start Story</a></p>
+    </div>
+  </div>
+<script>
+document.getElementById('startStory').addEventListener('click', function(){
+  localStorage.setItem('afg_story','true');
+  var sel = localStorage.getItem('afg_selected') || JSON.stringify({id:'lucas',name:'Lucas'});
+  localStorage.setItem('afg_selected', sel);
+  localStorage.setItem('afg_stage','Abasto');
+  window.location='fight.html';
+});
+</script>
+</body>
+</html>

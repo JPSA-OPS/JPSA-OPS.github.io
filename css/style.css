@@ -1,0 +1,19 @@
+/* Guilty Gear inspired theme */
+:root{
+  --bg:#05060a;--panel:#0c0f16;--accent:#ff5c7a;--accent2:#ff9a45;--muted:#9fb3cf;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial;background:linear-gradient(180deg,#03040a,#071227);color:#eaf4ff}
+.container{max-width:1100px;margin:28px auto;padding:18px}
+.header{display:flex;align-items:center;justify-content:space-between}
+.logo{font-size:28px;font-weight:800;color:var(--accent)}
+.menu{display:flex;gap:10px;margin-top:14px}
+.btn{background:linear-gradient(90deg,var(--accent),var(--accent2));padding:10px 14px;border-radius:8px;border:0;color:#071226;font-weight:800;cursor:pointer}
+.btn.ghost{background:transparent;border:1px solid rgba(255,255,255,0.04);color:var(--muted)}
+.panel{background:linear-gradient(180deg,rgba(255,255,255,0.02),transparent);padding:12px;border-radius:10px;border:1px solid rgba(255,255,255,0.03)}
+.roster-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.char-card{display:flex;gap:8px;align-items:center;padding:8px;border-radius:8px;background:rgba(255,255,255,0.02)}
+.mini-avatar{width:56px;height:56px;border-radius:8px;background:linear-gradient(135deg,#ff8aa1,#7ad7ff);display:flex;align-items:center;justify-content:center;font-weight:800}
+.hint{color:var(--muted);font-size:13px;margin-top:8px}
+.footer{color:var(--muted);text-align:center;margin-top:18px;font-size:13px}
+canvas{display:block;margin:0 auto;border-radius:8px}

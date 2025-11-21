@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><title>Roster</title><link rel="stylesheet" href="css/style.css" /></head>
+<body>
+  <div class="container">
+    <div class="header"><div><div class="logo">Roster</div><div class="hint">Full character list</div></div><div><a class="btn" href="index.html">Back</a></div></div>
+    <div class="panel" style="margin-top:18px">
+      <div id="fullRoster" class="roster-grid"></div>
+    </div>
+    <div class="footer">Source PDF: <a href="file:///mnt/data/Ideas de JPSA (1).pdf" target="_blank">Ideas de JPSA (1).pdf</a></div>
+  </div>
+<script>
+const CHARACTERS = [
+  {id:'lucas',name:'Lucas',hp:100,archetype:'Zonal',bio:'Pelota de basket, distancia.'},
+  {id:'sebas',name:'Sebas',hp:140,archetype:'Grappler',bio:'Agarres potentes.'},
+  {id:'lisi',name:'Lisi',hp:90,archetype:'Rush',bio:'Combo-heavy.'},
+  {id:'darta',name:'Darta',hp:110,archetype:'Shoto',bio:'Básico tipo shoto.'}
+];
+const wrap = document.getElementById('fullRoster');
+CHARACTERS.forEach(function(c){
+  var el = document.createElement('div'); el.className='char-card';
+  el.innerHTML = '<div class="mini-avatar">'+ c.name.charAt(0) +'</div><div><strong>'+ c.name +'</strong><div style="color:#9fb3cf">'+ c.archetype +' — HP '+ c.hp +'</div><div style="color:#9fb3cf;font-size:13px">'+ c.bio +'</div></div>';
+  wrap.appendChild(el);
+});
+</script>
+</body>
+</html>
