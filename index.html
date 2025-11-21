@@ -1,408 +1,479 @@
 <!doctype html>
-<html lang="es">
+<html lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>A's Fighting Game — JPSA (Prototype)</title>
-  <meta name="description" content="Ficha del prototipo de A's Fighting Game — personajes, mapas, historia y entradas." />
+  <title>A's Fighting Game — Prototype (Guilty Gear style)</title>
+  <meta name="description" content="Playable fighting game prototype (Phaser 3) with a Guilty-Gear-inspired menu UI. Drop your music into /assets/music/theme.mp3" />
   <style>
-    :root{
-      --bg:#0b1020;
-      --card:#0f1724;
-      --muted:#9aa7c7;
-      --accent:#ff5c7a;
-      --glass: rgba(255,255,255,0.04);
-      font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
-    }
+    /* Guilty-Gear-ish dramatic UI: dark, orange accents, strong borders */
+    :root{--bg:#05060a;--panel:#0c0f16;--accent:#ff5c7a;--accent2:#ff9a45;--muted:#9fb3cf;--glass:rgba(255,255,255,0.03)}
     *{box-sizing:border-box}
-    body{
-      margin:0;
-      background:linear-gradient(180deg,#071028 0%,var(--bg) 100%);
-      color:#e6eef8;
-      -webkit-font-smoothing:antialiased;
-      -moz-osx-font-smoothing:grayscale;
-      line-height:1.45;
-    }
-    header{
-      padding:28px 20px;
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:16px;
-    }
-    .brand{
-      display:flex;
-      gap:12px;
-      align-items:center;
-    }
-    .logo{
-      width:56px;height:56px;border-radius:12px;background:linear-gradient(135deg,#ff9aa2,#7ad7ff);
-      display:flex;align-items:center;justify-content:center;font-weight:700;color:#091226;
-      box-shadow:0 8px 24px rgba(0,0,0,0.5);
-    }
-    h1{margin:0;font-size:20px}
-    p.lead{margin:6px 0 0;color:var(--muted);font-size:13px}
+    html,body{height:100%;margin:0;font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial;color:#eaf4ff;background:linear-gradient(180deg,#03040a 0%,#071227 60%)}
+    #game-container{width:100%;height:100vh;display:flex;align-items:center;justify-content:center}
 
-    main{padding:20px;max-width:1100px;margin:0 auto}
-    .grid{
-      display:grid;
-      grid-template-columns:1fr;
-      gap:18px;
-    }
-    @media(min-width:900px){
-      .grid{grid-template-columns: 2fr 1fr}
-    }
+    /* Menu UI */
+    .ui-layer{position:absolute;inset:0;pointer-events:none}
+    .menu{width:980px;max-width:95%;height:640px;background:linear-gradient(180deg,rgba(255,255,255,0.02),rgba(255,255,255,0.01));border-radius:14px;border:2px solid rgba(255,255,255,0.04);box-shadow:0 20px 60px rgba(2,6,23,0.8);display:flex;overflow:hidden;pointer-events:auto}
+    .menu-left{width:48%;background:linear-gradient(180deg,#0b1220 0%,#071226 100%);padding:28px 22px;color:#fff;border-right:2px solid rgba(255,255,255,0.03);display:flex;flex-direction:column;justify-content:space-between}
+    .menu-right{flex:1;padding:20px;background:linear-gradient(180deg,#07102a, #071227);display:flex;flex-direction:column;justify-content:space-between}
 
-    /* hero */
-    .hero{
-      background:linear-gradient(180deg,rgba(255,255,255,0.02),transparent);
-      border-radius:12px;padding:18px;box-shadow:0 6px 30px rgba(2,6,23,0.6);
-    }
-    .hero-top{display:flex;align-items:center;justify-content:space-between;gap:12px}
-    .hero-info{display:flex;gap:12px;align-items:center}
-    .meta{
-      background:var(--glass);
-      padding:8px 12px;border-radius:10px;font-size:13px;color:var(--muted)
-    }
+    .logo{font-size:28px;font-weight:800;letter-spacing:1px;color:var(--accent);text-shadow:0 6px 20px rgba(255,92,122,0.12)}
+    .slogan{color:var(--muted);font-size:13px;margin-top:6px}
 
-    /* character list */
-    .chars{
-      display:grid;
-      grid-template-columns:repeat(2,1fr);
-      gap:12px;
-      margin-top:12px;
-    }
-    @media(min-width:900px){ .chars{grid-template-columns:repeat(3,1fr)} }
-    .card{
-      background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
-      border-radius:10px;padding:12px;border:1px solid rgba(255,255,255,0.03);
-    }
-    .char-name{display:flex;align-items:center;gap:10px}
-    .avatar{
-      width:56px;height:56px;border-radius:8px;background:linear-gradient(135deg,#2b6cff,#b45cff);
-      display:flex;align-items:center;justify-content:center;font-weight:700;color:white;font-size:18px;
-      flex-shrink:0;
-    }
-    .tag{font-size:12px;color:var(--muted);margin-top:8px}
+    .menu-buttons{margin-top:18px;display:flex;flex-direction:column;gap:12px}
+    .btn{background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:10px;padding:12px 16px;font-weight:800;color:#071226;border:none;cursor:pointer;outline:none;box-shadow:0 10px 30px rgba(255,90,120,0.12);transform-origin:left center}
+    .btn.ghost{background:transparent;border:1px solid rgba(255,255,255,0.04);color:var(--muted);box-shadow:none}
+    .btn:hover{transform:translateX(6px)}
 
-    /* side panel */
-    aside .panel{
-      position:sticky;top:20px;background:var(--card);padding:14px;border-radius:12px;border:1px solid rgba(255,255,255,0.03)
-    }
-    .stages, .story {margin-bottom:14px}
-    .stage{display:flex;justify-content:space-between;gap:8px;padding:8px 10px;background:rgba(255,255,255,0.02);border-radius:8px;margin-top:8px}
-    footer{color:var(--muted);text-align:center;padding:28px 12px;font-size:13px}
+    .credits{font-size:12px;color:var(--muted)}
 
-    /* modal */
-    .modal {
-      position:fixed;inset:0;background:rgba(2,6,23,0.7);display:none;align-items:center;justify-content:center;padding:20px;
-    }
-    .modal.show{display:flex}
-    .dialog{
-      width:min(820px,98%);background:linear-gradient(180deg,#081227,#0e1626);padding:18px;border-radius:12px;border:1px solid rgba(255,255,255,0.04);
-    }
-    .dialog h3{margin-top:0}
-    .close{
-      background:transparent;border:0;color:var(--muted);font-size:14px;padding:8px 10px;border-radius:8px;cursor:pointer
-    }
-    .controls{margin-top:12px;color:var(--muted);font-size:13px}
+    /* Character select small cards */
+    .roster{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:14px}
+    .char-card{background:linear-gradient(180deg,rgba(255,255,255,0.02),transparent);padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.03);display:flex;gap:8px;align-items:center}
+    .mini-avatar{width:56px;height:56px;border-radius:8px;background:linear-gradient(135deg,#ff8aa1,#7ad7ff);display:flex;align-items:center;justify-content:center;font-weight:800}
+    .char-meta{font-size:13px}
 
-    /* small */
-    .meta-row{display:flex;gap:8px;flex-wrap:wrap}
-    button.cta{
-      background:linear-gradient(90deg,var(--accent),#ffa96b);color:#071226;border:0;padding:10px 14px;border-radius:10px;font-weight:700;cursor:pointer;
-      box-shadow:0 8px 18px rgba(255,90,120,0.12)
+    /* footer for hints */
+    .hint{font-size:13px;color:var(--muted);margin-top:8px}
+
+    /* Game overlay (health bars, round UI) */
+    .game-ui{position:absolute;left:50%;transform:translateX(-50%);top:12px;width:980px;max-width:95%;pointer-events:none}
+    .hud{display:flex;justify-content:space-between;align-items:center;padding:8px 12px;background:linear-gradient(90deg,rgba(0,0,0,0.35),rgba(0,0,0,0.12));border-radius:8px;border:1px solid rgba(255,255,255,0.03)}
+    .health{width:420px;height:18px;background:rgba(255,255,255,0.06);border-radius:6px;overflow:hidden}
+    .bar{height:100%;background:linear-gradient(90deg,#fff 0%,var(--accent) 100%);width:100%}
+    .name{font-weight:800;color:#fff}
+
+    /* Small responsive */
+    @media(max-width:780px){
+      .menu{height:84vh;flex-direction:column}
+      .menu-left{width:100%;border-right:0}
+      .game-ui{left:8px;transform:none;width:calc(100% - 16px)}
     }
   </style>
 </head>
 <body>
-  <header>
-    <div class="brand">
-      <div class="logo">AFG</div>
-      <div>
-        <h1>A's Fighting Game — JPSA</h1>
-        <p class="lead">Prototipo: fichas de personajes, mapas y modo historia (ideas base).</p>
-      </div>
-    </div>
-    <div class="meta">
-      Prototype • Web demo • Ideas tomadas del archivo subido. :contentReference[oaicite:1]{index=1}
-    </div>
-  </header>
+  <div id="game-container"></div>
 
-  <main>
-    <section class="grid">
-      <!-- LEFT: hero + characters -->
-      <div>
-        <div class="hero card">
-          <div class="hero-top">
-            <div>
-              <h2 style="margin:0 0 6px 0">Batallas callejeras & secta poseída</h2>
-              <div style="color:var(--muted);font-size:14px">
-                Premisa: "E" ha poseído a la mayoría de la secta de A. El personaje elegido debe pelear para liberar a los demás y llegar al jefe final en el server. (Modo Historia esencial). :contentReference[oaicite:2]{index=2}
-              </div>
-            </div>
-            <div class="meta-row">
-              <div class="meta">Modo: 1P / 2P</div>
-              <div class="meta">Estilo: 2D/Arcade</div>
-              <div class="meta">Arquetipos mezclados</div>
-            </div>
-          </div>
-
-          <div class="chars" style="margin-top:14px">
-            <!-- Character cards: name, short archetype, short description. -->
-            <article class="card" data-id="lucas">
-              <div class="char-name">
-                <div class="avatar">L</div>
-                <div>
-                  <strong>Lucas</strong>
-                  <div class="tag">Arquetipo: Zonal / proyectil con balón</div>
-                </div>
-              </div>
-              <div class="tag">Ataques a distancia con pelota de basket que rebota; combates cortos con puños; especiales inspirados en movimientos de básquet.</div>
-              <div style="margin-top:10px"><button class="cta" onclick="openChar('lucas')">Ver ficha</button></div>
-            </article>
-
-            <article class="card" data-id="sebas">
-              <div class="char-name"><div class="avatar">S</div>
-                <div><strong>Sebas</strong><div class="tag">Arquetipo: Grappler / Cebo y castigo</div></div>
-              </div>
-              <div class="tag">Lento, gran tamaño, golpes potentes y agarres que castigan; podría usar cadena o impacto al piso como agarre especial.</div>
-              <div style="margin-top:10px"><button class="cta" onclick="openChar('sebas')">Ver ficha</button></div>
-            </article>
-
-            <article class="card" data-id="lisi">
-              <div class="char-name"><div class="avatar">Li</div>
-                <div><strong>Lisi</strong><div class="tag">Arquetipo: Rush / Combo-heavy</div></div>
-              </div>
-              <div class="tag">Golpes rápidos, muchos combos; proyectiles temáticos (mangas, objetos cómicos) con bajo daño por proyectil.</div>
-              <div style="margin-top:10px"><button class="cta" onclick="openChar('lisi')">Ver ficha</button></div>
-            </article>
-
-            <article class="card" data-id="leon">
-              <div class="char-name"><div class="avatar">Le</div>
-                <div><strong>León</strong><div class="tag">Arquetipo: All-rounder ofensivo</div></div>
-              </div>
-              <div class="tag">Ofensivo, ataques corto-medio-larga distancia; estética bajita y proyectiles "espirituales" (referencia latina).</div>
-              <div style="margin-top:10px"><button class="cta" onclick="openChar('leon')">Ver ficha</button></div>
-            </article>
-
-            <article class="card" data-id="lilian">
-              <div class="char-name"><div class="avatar">Li</div>
-                <div><strong>Lilian</strong><div class="tag">Arquetipo: Projectile / Zonero ágil</div></div>
-              </div>
-              <div class="tag">Alta velocidad y projectiles; hechizos o libros-trampa; ejemplo de movimiento: Expelliarmus (empuja/desarma).</div>
-              <div style="margin-top:10px"><button class="cta" onclick="openChar('lilian')">Ver ficha</button></div>
-            </article>
-
-            <article class="card" data-id="gonza">
-              <div class="char-name"><div class="avatar">G</div>
-                <div><strong>Gonzalo (Gonza)</strong><div class="tag">Arquetipo: Pressurer / Parry</div></div>
-              </div>
-              <div class="tag">Cuerpo a cuerpo, combos de alto daño, presión constante; parry estilo Ryu como recurso técnico.</div>
-              <div style="margin-top:10px"><button class="cta" onclick="openChar('gonza')">Ver ficha</button></div>
-            </article>
-
-            <article class="card" data-id="giovanni">
-              <div class="char-name"><div class="avatar">Gi</div>
-                <div><strong>Giovanni</strong><div class="tag">Arquetipo: Dominating / Rushdown</div></div>
-              </div>
-              <div class="tag">Velocidad y daño altos, debilidades explotables; posible gimmick inspirado en criaturas (idea: Pokémon-like, pendiente de balance).</div>
-              <div style="margin-top:10px"><button class="cta" onclick="openChar('giovanni')">Ver ficha</button></div>
-            </article>
-
-            <article class="card" data-id="martinjuan">
-              <div class="char-name"><div class="avatar">MJ</div>
-                <div><strong>Martín & Juan</strong><div class="tag">Arquetipo: Duo / Tag-lite</div></div>
-              </div>
-              <div class="tag">Dos personajes que comparten espacio; uno da golpes y otro patadas; combos cooperativos (estilo Cloak & Dagger / stand dual).</div>
-              <div style="margin-top:10px"><button class="cta" onclick="openChar('martinjuan')">Ver ficha</button></div>
-            </article>
-
-            <article class="card" data-id="joaquin">
-              <div class="char-name"><div class="avatar">J</div>
-                <div><strong>Joaquín</strong><div class="tag">Arquetipo: All-rounder / OVNIS</div></div>
-              </div>
-              <div class="tag">Proyectiles en forma de OVNIs; equilibrado y accesible para aprender; buen control de espacio.</div>
-              <div style="margin-top:10px"><button class="cta" onclick="openChar('joaquin')">Ver ficha</button></div>
-            </article>
-
-            <article class="card" data-id="darta">
-              <div class="char-name"><div class="avatar">D</div>
-                <div><strong>Darta (Tartas)</strong><div class="tag">Arquetipo: Básico / Shoto-like</div></div>
-              </div>
-              <div class="tag">Jugador clásico tipo Ryu/Ken; ataques relacionados con dibujo/lápices; fáciles de entender para principiantes.</div>
-              <div style="margin-top:10px"><button class="cta" onclick="openChar('darta')">Ver ficha</button></div>
-            </article>
-          </div>
-        </div>
-
-        <!-- small instruction -->
-        <div style="margin-top:12px;color:var(--muted);font-size:13px">
-          Consejo: usa estas fichas como base — cada personaje necesita kit (normales, especiales, supers, frames) y pruebas de balance.
-        </div>
-      </div>
-
-      <!-- RIGHT: side panel with story and maps -->
-      <aside>
-        <div class="panel">
-          <div class="story">
-            <h3 style="margin:0 0 8px 0">Historia (resumen)</h3>
-            <div style="color:var(--muted);font-size:14px">
-              Premisa: la entidad "E" ha poseído a los miembros de la secta de A, salvo al elegido (el protagonista). El protagonista recorre locales (secundaria, primaria, Abasto, casa de Darta...) derrotando a cada sectario hasta liberar a todos y enfrentar al jefe final en un server. :contentReference[oaicite:3]{index=3}
-            </div>
-          </div>
-
-          <div class="stages" style="margin-top:12px">
-            <h4 style="margin:0 0 8px 0">Mapas / Escenarios</h4>
-            <div class="stage"><div>Abasto</div><div class="tag">Zona del Coto — ambiente callejero</div></div>
-            <div class="stage"><div>Secundaria</div><div class="tag">Patio del árbol — escuela</div></div>
-            <div class="stage"><div>Patio de Darta</div><div class="tag">Patio trasero — ambiente indie</div></div>
-            <div class="stage"><div>Server (Minecraft)</div><div class="tag">Entrada de la iglesia — boss stage</div></div>
-            <div class="stage"><div>Casa Lisi</div><div class="tag">Living — escenario cerrado</div></div>
-            <div class="stage"><div>Primaria</div><div class="tag">Entrada — retro vibes</div></div>
-          </div>
-
-          <div style="margin-top:12px">
-            <h4 style="margin:0 0 8px 0">Entradas / Victory</h4>
-            <div style="color:var(--muted);font-size:14px">
-              Cada personaje tiene una entrada y una celebración distinta (por ejemplo: Joaquín baja de un OVNI; Gonza entra al estilo Kirby; Darta dibuja su entrada). Ideas extra y "fin de partida" descriptos en el documento original. :contentReference[oaicite:4]{index=4}
-            </div>
-          </div>
-
-          <div style="margin-top:14px">
-            <h4 style="margin:0 0 8px 0">Ideas rápidas</h4>
-            <ul style="margin:0;color:var(--muted);font-size:14px;padding-left:18px">
-              <li>Modo entrenamiento con maestro "Viejonza".</li>
-              <li>Especial de Darta que cambie color del enemigo.</li>
-              <li>Especial de Sebas que drene más vida al usuario que al enemigo (gimmick).</li>
-            </ul>
-          </div>
-
-          <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">
-            <button class="cta" onclick="downloadJSON()">Descargar ficha (JSON)</button>
-            <button class="close" onclick="showCredits()">Créditos / Fuente</button>
-          </div>
-        </div>
-      </aside>
-    </section>
-
-    <!-- modal detail -->
-    <div id="modal" class="modal" role="dialog" aria-modal="true" aria-hidden="true">
-      <div class="dialog" id="dialog">
-        <div style="display:flex;justify-content:space-between;align-items:center">
-          <h3 id="m-title">Personaje</h3>
+  <!-- UI layer sits on top of canvas for menu and HUD -->
+  <div class="ui-layer">
+    <div id="menuWrap" style="display:flex;align-items:center;justify-content:center;height:100vh">
+      <div class="menu" id="menu">
+        <div class="menu-left">
           <div>
-            <button class="close" onclick="closeModal()">Cerrar ✕</button>
+            <div class="logo">A's Fighting Game</div>
+            <div class="slogan">Prototype — Guilty Gear inspired menu</div>
+
+            <div class="menu-buttons" id="mainButtons">
+              <button class="btn" id="btnPlay">PLAY</button>
+              <button class="btn" id="btnTraining">TRAINING</button>
+              <button class="btn" id="btnRoster">ROSTER</button>
+              <button class="btn ghost" id="btnOptions">OPTIONS</button>
+              <button class="btn ghost" id="btnCredits">CREDITS</button>
+            </div>
+
+            <div class="hint">Use arrows to navigate inside the game. J = Light, K = Heavy. Special: ↓→ + J</div>
+
+            <div class="roster" style="margin-top:18px" id="menuRoster">
+              <!-- some roster previews populated by JS -->
+            </div>
           </div>
+          <div class="credits">Ideas & roster from uploaded PDF: <a href="/mnt/data/Ideas de JPSA (1).pdf" target="_blank" style="color:var(--accent)">Ideas de JPSA (1).pdf</a></div>
         </div>
-        <div id="m-body" style="color:var(--muted);margin-top:8px"></div>
-        <div class="controls">
-          <strong>Controles sugeridos</strong>
-          <div style="margin-top:6px">
-            <code>LP / MP / HP</code> — golpes leves/medios/duros • <code>LK / MK / HK</code> — patadas • <code>↓↘→ + P</code> — proyectil especial • <code>↑↑</code> — salto doble
+
+        <div class="menu-right">
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <div style="color:var(--muted)">Mode</div>
+              <div style="color:var(--muted)">v0.9 — Prototype</div>
+            </div>
+            <div style="height:12px;border-radius:6px;background:rgba(255,255,255,0.02);margin-top:6px"></div>
+
+            <div style="margin-top:18px;color:var(--muted)">
+              <strong style="color:var(--accent)">PLAY</strong> launches a quick match vs CPU (single round). <br>
+              <strong style="color:var(--accent)">TRAINING</strong> opens a special sandbox to test moves.
+            </div>
+
+            <div style="margin-top:12px;display:flex;gap:8px">
+              <div style="flex:1;background:linear-gradient(180deg,rgba(255,255,255,0.02),transparent);padding:12px;border-radius:8px;border:1px solid rgba(255,255,255,0.03)">
+                <div style="color:var(--muted);font-size:13px">Character Select</div>
+                <div id="selectedChar" style="margin-top:8px;color:#fff;font-weight:800">Lucas (default)</div>
+              </div>
+              <div style="width:180px;background:linear-gradient(180deg,rgba(255,255,255,0.02),transparent);padding:12px;border-radius:8px;border:1px solid rgba(255,255,255,0.03)">
+                <div style="color:var(--muted);font-size:13px">Stage</div>
+                <div id="selectedStage" style="margin-top:8px;color:#fff;font-weight:800">Abasto</div>
+              </div>
+            </div>
+
+            <div style="margin-top:16px;color:var(--muted);font-size:13px">
+              Music: Drop your track at <code>/assets/music/theme.mp3</code> in the repo to be auto-loaded. (Supported: mp3, ogg)
+            </div>
+
+          </div>
+
+          <div style="display:flex;gap:8px;justify-content:flex-end;align-items:center">
+            <button class="btn ghost" id="btnImport">Import Roster</button>
+            <button class="btn" id="btnStart">START</button>
           </div>
         </div>
       </div>
     </div>
 
-  </main>
+    <!-- HUD that shows during gameplay -->
+    <div class="game-ui" id="hud" style="display:none">
+      <div class="hud" style="backdrop-filter:blur(6px);">
+        <div style="display:flex;gap:12px;align-items:center">
+          <div style="text-align:left">
+            <div class="name" id="p1Name">Lucas</div>
+            <div class="health" id="p1Health"><div class="bar" id="p1Bar" style="width:100%"></div></div>
+          </div>
+        </div>
+        <div style="text-align:center;color:var(--muted)">ROUND 1</div>
+        <div style="display:flex;gap:12px;align-items:center">
+          <div style="text-align:right">
+            <div class="name" id="p2Name">CPU</div>
+            <div class="health" id="p2Health"><div class="bar" id="p2Bar" style="width:100%"></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
 
-  <footer>
-    Hecho con las ideas del documento subido. Para ajustar arte, animaciones y balance, conviene exportar cada kit a un CSV/JSON y probar en build (Unity / Godot / custom engine). :contentReference[oaicite:5]{index=5}
-  </footer>
+  </div>
 
+  <!-- Phaser and game code -->
+  <script src="https://cdn.jsdelivr.net/npm/phaser@3.60.0/dist/phaser.min.js"></script>
   <script>
-    // DATA (resumida a partir del PDF de usuario)
-    const CHARACTERS = {
-      lucas: {
-        name:"Lucas",
-        archetype:"Zonal / Ball control",
-        desc:"Controla el espacio con una pelota de básquet que rebota; en corto usa puños. Especiales inspirados en movimientos de básquet (canasta aérea, pase-trampa)."
-      },
-      sebas: {
-        name:"Sebas",
-        archetype:"Grappler / Cebo y castigo",
-        desc:"Personaje de agarre: lento pero con agarres y golpes muy potentes. Ideal para castigar aperturas; posible uso de cadena o slam."
-      },
-      lisi: {
-        name:"Lisi",
-        archetype:"Rush / Combo-heavy",
-        desc:"Golpes muy rápidos y cadenas de combo. Proyectiles 'tontos' (mangas, panchos) de poco daño; diseño para presionar."
-      },
-      leon: {
-        name:"León",
-        archetype:"Ofensivo / All-rounder",
-        desc:"Ataca en corto, medio y largo. Proyectiles espirituales (temática latina). Personaje más bajito."
-      },
-      lilian: {
-        name:"Lilian",
-        archetype:"Zonero ágil / Projectile",
-        desc:"Alta velocidad y uso de proyectiles (libros/hechizos) que funcionan como trampas; ejemplo: empuje 'Expelliarmus'."
-      },
-      gonza: {
-        name:"Gonzalo (Gonza)",
-        archetype:"Pressurer / Parry",
-        desc:"Combate cuerpo a cuerpo con combos de alto daño y parry técnico estilo Ryu."
-      },
-      giovanni: {
-        name:"Giovanni",
-        archetype:"Dominating / Rushdown",
-        desc:"Velocidad y daño elevados; potencia alta con debilidades definidas. Idea de gimmick relacionada a criaturas (pendiente)."
-      },
-      martinjuan: {
-        name:"Martín & Juan",
-        archetype:"Duo / Tag-lite",
-        desc:"Par integrado: uno hace golpes, el otro patadas; combos conjuntos tipo 'stand' o cloack & dagger."
-      },
-      joaquin: {
-        name:"Joaquín",
-        archetype:"All-rounder / OVNIS",
-        desc:"Proyectiles en forma de OVNIs; equilibrado y accesible para nuevos jugadores."
-      },
-      darta: {
-        name:"Darta (Tartas)",
-        archetype:"Shoto-like / Básico",
-        desc:"Personaje básico tipo Ryu/Ken; ataques relacionados con dibujo y lápices; buena elección para principiantes."
-      }
+    // Basic in-browser prototype fighting game using Phaser 3
+    // Style A: Guilty Gear inspired menu visuals (implemented via DOM + CSS). Game canvas uses pixel + vector primitives.
+
+    // CONFIG
+    const GAME_WIDTH = 980;
+    const GAME_HEIGHT = 540;
+
+    // Simple roster (taken from the PDF). We'll map characters to simple colored rectangles / stats.
+    const ROSTER = [
+      {id:'lucas', name:'Lucas', color:0xff8aa1, hp:100, archetype:'Zonal'},
+      {id:'sebas', name:'Sebas', color:0xffb26b, hp:140, archetype:'Grappler'},
+      {id:'lisi', name:'Lisi', color:0x7ad7ff, hp:90, archetype:'Rush'},
+      {id:'darta', name:'Darta', color:0xb45cff, hp:110, archetype:'Shoto'}
+    ];
+
+    // Sound paths (user will add actual music at /assets/music/theme.mp3)
+    const MUSIC_PATH = 'assets/music/theme.mp3';
+    const SFX = {
+      hit:'assets/sfx/hit.wav',
+      select:'assets/sfx/select.wav',
+      start:'assets/sfx/start.wav'
     };
 
-    // modal functions
-    function openChar(id){
-      const c = CHARACTERS[id];
-      if(!c) return;
-      document.getElementById('m-title').textContent = c.name + " — " + c.archetype;
-      document.getElementById('m-body').innerHTML = "<p style='margin:0 0 8px 0'>"+c.desc+"</p>" +
-        "<p style='margin:0;color:var(--muted)'>Ideas extra: entrada especial, victory pose, animaciones y super moves.</p>";
-      const modal = document.getElementById('modal');
-      modal.classList.add('show');
-      modal.setAttribute('aria-hidden','false');
-    }
-    function closeModal(){
-      const modal = document.getElementById('modal');
-      modal.classList.remove('show');
-      modal.setAttribute('aria-hidden','true');
-    }
-    window.addEventListener('keydown', (e)=>{ if(e.key==='Escape') closeModal(); });
+    // Game State managed partially by DOM buttons
+    let selectedChar = ROSTER[0];
+    let selectedStage = 'Abasto';
 
-    // Download minimal JSON of the current roster (helper to export)
-    function downloadJSON(){
-      const payload = {
-        meta:{title:"A's Fighting Game — roster export"},
-        characters:CHARACTERS,
-        maps:[
-          "Abasto","Secundaria (Patio)","Patio de Darta","Server (Minecraft)","Casa Lisi","Primaria"
-        ],
-        notes:"Export creado desde index.html (prototype). Basado en documento subido."
-      };
-      const blob = new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a'); a.href = url; a.download = 'afg_roster.json';
-      document.body.appendChild(a); a.click(); setTimeout(()=>{ URL.revokeObjectURL(url); a.remove(); },500);
+    // DOM wiring
+    document.getElementById('selectedChar').textContent = selectedChar.name;
+    document.getElementById('selectedStage').textContent = selectedStage;
+
+    const rosterWrap = document.getElementById('menuRoster');
+    ROSTER.forEach(r=>{
+      const el = document.createElement('div'); el.className='char-card';
+      el.innerHTML = `<div class="mini-avatar" style="background:linear-gradient(135deg, #fff 0%, transparent), linear-gradient(135deg, ${toHexCss(r.color)}, #222)">${r.name.charAt(0)}</div><div class="char-meta"><strong>${r.name}</strong><div style="color:var(--muted);font-size:12px">${r.archetype}</div></div>`;
+      el.addEventListener('click',()=>{ selectedChar = r; document.getElementById('selectedChar').textContent = r.name; playSFX('select'); });
+      rosterWrap.appendChild(el);
+    });
+
+    document.getElementById('btnPlay').addEventListener('click', ()=> launchQuickMatch());
+    document.getElementById('btnStart').addEventListener('click', ()=> launchQuickMatch());
+    document.getElementById('btnTraining').addEventListener('click', ()=> launchTraining());
+    document.getElementById('btnRoster').addEventListener('click', ()=> alert('Roster panel is the left preview.\nYou can import full JSON via the Import button.'));
+    document.getElementById('btnImport').addEventListener('click', ()=> importRoster());
+    document.getElementById('btnCredits').addEventListener('click', ()=> alert('Prototype by the user (ideas from uploaded PDF).'));
+
+    // small sfx loader (silently ignore missing files)
+    const audioCtx = {music:null, sfx:{}};
+    function loadAudio(scene){
+      // try to load music via XHR and decode; Phaser will also try via its loader on scene create
+      // We'll prepare a short audio element for music so user-provided file plays if present in site root
+      const music = document.createElement('audio');
+      music.src = MUSIC_PATH;
+      music.loop = true; music.preload='auto';
+      music.volume = 0.7;
+      music.addEventListener('error', ()=>{/* no-op if missing */});
+      audioCtx.music = music;
+
+      // SFX placeholders (we will create beep if missing)
+      Object.keys(SFX).forEach(k=>{
+        const a = document.createElement('audio'); a.src = SFX[k]; a.preload='auto'; a.addEventListener('error', ()=>{});
+        audioCtx.sfx[k] = a;
+      });
     }
 
-    function showCredits(){
-      alert("Ideas y contenido tomados del documento 'Ideas de JPSA' (archivo del usuario). Referencia interna disponible.");
+    function playMusic(){ if(audioCtx.music && audioCtx.music.play) audioCtx.music.play().catch(()=>{}); }
+    function stopMusic(){ if(audioCtx.music) audioCtx.music.pause(); audioCtx.music.currentTime = 0; }
+    function playSFX(name){ const a = audioCtx.sfx[name]; if(a && a.play) a.play().catch(()=>{}); else console.log('SFX',name,'not found'); }
+
+    // Phaser Scenes
+    class BootScene extends Phaser.Scene{
+      constructor(){ super('BootScene'); }
+      preload(){
+        // small graphics (we'll use Phaser to generate backgrounds)
+        this.load.image('bgTiles', ''); // intentionally empty — not required
+      }
+      create(){
+        loadAudio(this);
+        this.scene.start('MenuScene');
+      }
     }
+
+    class MenuScene extends Phaser.Scene{
+      constructor(){ super('MenuScene'); }
+      create(){
+        // Animated background gradient using graphics
+        this.bg = this.add.graphics();
+        this.t = 0;
+        this.time.addEvent({delay:40,loop:true,callback:()=>{ this.t+=0.01; this.drawBG(); }});
+
+        // tiny instruction: clicking the canvas also starts
+        this.input.on('pointerdown', ()=>{
+          // quick flash
+          this.cameras.main.flash(150,255,160,160);
+        });
+
+        // show menu UI (DOM) is already present; we just keep canvas as background
+        this.scene.stop(); // pause phaser rendering for menu to reduce CPU — we'll resume on play
+      }
+      drawBG(){
+        const g = this.bg; g.clear();
+        const w = this.sys.game.config.width; const h = this.sys.game.config.height;
+        // moving radial
+        const r = Math.abs(Math.sin(this.t*0.6))*260 + 200;
+        const cx = w*0.5 + Math.cos(this.t*0.8)*80; const cy = h*0.4 + Math.sin(this.t*0.6)*30;
+        const grd = g.createRadialGradient(cx,cy,0,cx,cy,r);
+        // manual gradient fill using fillStyle + alpha rectangles
+        g.fillStyle(0x071227,1); g.fillRect(0,0,w,h);
+        g.fillStyle(0xff5c7a,0.06); g.fillCircle(cx,cy,r);
+        g.fillStyle(0xff9a45,0.04); g.fillCircle(cx+140,cy+60,r*0.6);
+      }
+    }
+
+    class FightScene extends Phaser.Scene{
+      constructor(){ super('FightScene'); }
+      preload(){
+        // no external assets required; will draw shapes
+      }
+      create(){
+        // reveal HUD
+        document.getElementById('menuWrap').style.display = 'none';
+        document.getElementById('hud').style.display = 'block';
+        playMusic();
+
+        const w = this.sys.game.config.width; const h = this.sys.game.config.height;
+
+        // stage background simple
+        this.add.rectangle(w/2,h/2,w,h,'0x071226');
+        // ground
+        this.add.rectangle(w/2,h-60,w,120,0x0f1724).setDepth(1);
+
+        // players
+        this.p1 = new Player(this, 220, h-160, selectedChar || ROSTER[0], false);
+        this.p2 = new Player(this, 760, h-160, ROSTER[1], true);
+
+        // camera
+        this.cameras.main.setBackgroundColor('#071227');
+
+        // collision / bounds
+        this.physics.world.setBounds(0,0,w,h);
+
+        // physics collider placeholder
+        this.p1.sprite.setCollideWorldBounds(true); this.p2.sprite.setCollideWorldBounds(true);
+
+        // input keys
+        this.cursors = this.input.keyboard.createCursorKeys();
+        this.keyJ = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.J);
+        this.keyK = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.K);
+
+        // UI linking for health
+        this.updateHealthBars();
+
+        // round state
+        this.winner = null;
+      }
+      update(time, dt){
+        if(!this.p1 || !this.p2) return;
+        this.p1.update(this.cursors, this.keyJ, this.keyK, this.p2);
+        // simple CPU for p2
+        this.p2.aiUpdate(this.p1);
+
+        // check collisions simple: if attack active and overlaps
+        if(this.p1.isAttacking && Phaser.Geom.Intersects.RectangleToRectangle(this.p1.attackBox.getBounds(), this.p2.sprite.getBounds())){
+          this.p2.takeHit(this.p1.attackPower);
+          this.p1.onHitLanded();
+          playSFX('hit');
+        }
+        if(this.p2.isAttacking && Phaser.Geom.Intersects.RectangleToRectangle(this.p2.attackBox.getBounds(), this.p1.sprite.getBounds())){
+          this.p1.takeHit(this.p2.attackPower);
+          this.p2.onHitLanded();
+          playSFX('hit');
+        }
+
+        this.updateHealthBars();
+        if(!this.winner){
+          if(this.p1.hp <= 0){ this.winner = 'p2'; this.onKO(); }
+          else if(this.p2.hp <= 0){ this.winner = 'p1'; this.onKO(); }
+        }
+      }
+      updateHealthBars(){
+        const p1Pct = Phaser.Math.Clamp(this.p1.hp/this.p1.maxHp*100, 0, 100);
+        const p2Pct = Phaser.Math.Clamp(this.p2.hp/this.p2.maxHp*100, 0, 100);
+        document.getElementById('p1Bar').style.width = p1Pct + '%';
+        document.getElementById('p2Bar').style.width = p2Pct + '%';
+        document.getElementById('p1Name').textContent = this.p1.name;
+        document.getElementById('p2Name').textContent = this.p2.name + ' (CPU)';
+      }
+      onKO(){
+        playSFX('start');
+        stopMusic();
+        const msg = this.winner === 'p1' ? `${this.p1.name} WINS!` : `${this.p2.name} WINS!`;
+        const that = this;
+        const t = this.add.text(this.sys.game.config.width/2, 120, msg, {fontSize:'40px',fontFamily:'Arial',color:'#fff'}).setOrigin(0.5);
+        t.setShadow(0,6,'#ff5c7a',12);
+        this.time.delayedCall(2000, ()=>{
+          document.getElementById('menuWrap').style.display = 'flex';
+          document.getElementById('hud').style.display = 'none';
+          this.scene.start('MenuScene');
+          stopMusic();
+        });
+      }
+    }
+
+    class Player{
+      constructor(scene,x,y, data, flip){
+        this.scene = scene; this.x=x; this.y=y; this.name = data.name; this.maxHp = data.hp; this.hp = data.hp; this.color = data.color; this.flip = flip;
+        this.sprite = scene.add.rectangle(x,y,64,112,data.color).setOrigin(0.5,1);
+        scene.physics.add.existing(this.sprite); this.sprite.body.setSize(40,100).setOffset(12,12);
+        this.speed = 220; this.jumpSpeed = -420; this.isAttacking=false; this.attackPower=8; this.attackBox = scene.add.rectangle(x,y-44,48,28,0xffffff,0.0);
+        scene.physics.add.existing(this.attackBox); this.attackBox.body.allowGravity=false; this.attackBox.visible=false;
+        this.attackTimer = 0; this.grounded = true;
+        // little name text
+        this.label = scene.add.text(x, y-140, this.name, {fontSize:'14px',fontFamily:'Arial',color:'#fff'}).setOrigin(0.5);
+      }
+      update(cursors, keyJ, keyK, enemy){
+        const body = this.sprite.body;
+        // left/right
+        body.velocity.x = 0;
+        if(cursors.left.isDown){ body.velocity.x = -this.speed; }
+        else if(cursors.right.isDown){ body.velocity.x = this.speed; }
+
+        // jump
+        if(Phaser.Input.Keyboard.JustDown(cursors.up) && body.onFloor()){
+          body.velocity.y = this.jumpSpeed; this.scene.sound && this.scene.sound.play && this.scene.sound.play('jump');
+        }
+
+        // attack J
+        if(Phaser.Input.Keyboard.JustDown(keyJ)){
+          this.doAttack(1);
+        }
+        // heavy K
+        if(Phaser.Input.Keyboard.JustDown(keyK)){
+          this.doAttack(2);
+        }
+
+        // update attack box position
+        const dir = (enemy.sprite.x > this.sprite.x) ? 1 : -1;
+        this.attackBox.x = this.sprite.x + 34*dir;
+        this.attackBox.y = this.sprite.y - 44;
+        this.label.x = this.sprite.x; this.label.y = this.sprite.y - 140;
+
+        // attack timer
+        if(this.attackTimer>0){ this.attackTimer -= this.scene.game.loop.delta; if(this.attackTimer<=0){ this.isAttacking=false; } }
+      }
+      doAttack(powerType){
+        this.isAttacking = true; this.attackPower = powerType===1?8:18; this.attackTimer = 300;
+        // small flash
+        this.attackBox.fillAlpha = 0.25; const that=this; this.scene.tweens.add({targets:this.attackBox,alpha:0,duration:200});
+      }
+      onHitLanded(){ this.isAttacking=false; this.attackTimer=0; }
+      takeHit(dmg){ this.hp -= dmg; if(this.hp<0) this.hp=0; }
+      aiUpdate(player){
+        // naive CPU: move towards player and occasionally attack
+        const body = this.sprite.body; const px = player.sprite.x;
+        if(Math.abs(px - this.sprite.x) > 120){
+          body.velocity.x = (px < this.sprite.x) ? -80 : 80;
+        } else { body.velocity.x = 0; if(Phaser.Math.Between(0,1000) < 18){ this.doAttack(Phaser.Math.Between(1,2)); } }
+
+        // update attack box
+        this.attackBox.x = this.sprite.x + (player.sprite.x > this.sprite.x ? 34 : -34);
+        this.attackBox.y = this.sprite.y - 44;
+        if(this.attackTimer>0){ this.attackTimer -= this.scene.game.loop.delta; if(this.attackTimer<=0) this.isAttacking=false; }
+        this.label.x = this.sprite.x; this.label.y = this.sprite.y - 140;
+      }
+    }
+
+    // boot the Phaser game
+    const config = {
+      type: Phaser.AUTO,
+      parent: 'game-container',
+      width: GAME_WIDTH,
+      height: GAME_HEIGHT,
+      physics: { default: 'arcade', arcade: { gravity: { y: 1000 }, debug:false } },
+      scene: [BootScene, MenuScene, FightScene]
+    };
+
+    const game = new Phaser.Game(config);
+
+    // helper functions
+    function toHexCss(n){ return '#' + ('000000' + n.toString(16)).slice(-6); }
+
+    function launchQuickMatch(){
+      // start or resume phaser scene
+      document.getElementById('menuWrap').style.display = 'none';
+      game.scene.start('FightScene');
+      // ensure music plays if present
+      playMusic();
+    }
+
+    function launchTraining(){
+      alert('Training mode — simplified for prototype. Starting quick match in training rules.');
+      launchQuickMatch();
+    }
+
+    function importRoster(){
+      // let user drop a JSON into prompt (basic supporting function)
+      const json = prompt('Paste roster JSON here (or leave blank for default)');
+      if(!json) return;
+      try{
+        const data = JSON.parse(json);
+        if(data.characters){
+          // override ROSTER
+          while(ROSTER.length) ROSTER.pop();
+          Object.values(data.characters).forEach(c=>ROSTER.push({id:c.id||c.name,name:c.name||c.id,color:c.color||0xff8aa1,hp:c.hp||100,archetype:c.archetype||''}));
+          alert('Roster imported — refresh to apply visuals');
+        } else alert('Invalid format: missing characters');
+      }catch(e){ alert('JSON parse error: '+e.message); }
+    }
+
+    // expose some helpers for debugging
+    window.AFG = { game, ROSTER, launchQuickMatch };
+
   </script>
+
+  <!-- Deployment notes -->
+  <!--
+    How to deploy to GitHub Pages:
+    1) Create a new GitHub repo, add this index.html at root.
+    2) Add folder assets/ with subfolders music/ (put your theme.mp3 at assets/music/theme.mp3) and sfx/ if desired.
+    3) Push to main branch and enable GitHub Pages (Settings -> Pages -> Deploy from branch: main / root).
+    4) Open the published URL. Music will auto-play when a match starts if file exists.
+
+    Files to add for better experience (optional):
+    - assets/music/theme.mp3  (your music)
+    - assets/sfx/hit.wav
+    - assets/sfx/select.wav
+    - assets/sfx/start.wav
+
+    Note: Browsers may block autoplay of audio until the user interacts with the page. The UI's Start button triggers audio playback.
+
+    The uploaded PDF used as reference is linked inside the menu, path: /mnt/data/Ideas de JPSA (1).pdf
+  -->
 </body>
 </html>
